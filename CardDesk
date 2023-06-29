@@ -1,0 +1,49 @@
+public class CardDeck : MonoBehaviour
+{
+    public GameObject cardBack;
+    public GameObject[] cardFaces;
+    public Transform[] spawnPoints;
+
+    private List<GameObject> cards;
+    private List<GameObject> currentCards = new List<GameObject>();
+    void Start()
+    {
+        cards = new List<GameObject>(cardFaces);
+        
+    }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            DrawCard();
+            
+        }
+    }
+
+    void DrawCard()
+    {
+        if (currentCards.Count >= 3)
+        {
+            Destroy(currentCards[2]);
+            currentCards.RemoveAt(2);
+            for (int i = currentCards.Count - 1; i >= 0; i--)
+            {
+                currentCards[i].transform.position = spawnPoints[i + 1].position;
+                currentCards[i].GetComponent<SpriteRenderer>().sortingOrder = 1 - i;
+            }
+        }
+
+        if (cards.Count > 0)
+        {
+            
+            int randomIndex = Random.Range(0, cards.Count);
+            GameObject newCard = Instantiate(cards[randomIndex], spawnPoints[0].position, Quaternion.identity);
+            
+            newCard.GetComponent<SpriteRenderer>().sortingOrder = 2;
+            
+            currentCards.Insert(0, newCard);
+            cards.RemoveAt(randomIndex);
+        }
+    }
+
+}
